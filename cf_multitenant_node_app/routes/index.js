@@ -23,4 +23,29 @@ router.get('/', function(req, res, next) {
     }
 });
 
+//******************************** API Callbacks for multitenancy ********************************
+
+/**
+ * Request Method Type - PUT
+ * When a consumer subscribes to this application, SaaS Provisioning invokes this API.
+ * We return the SaaS application url for the subscribing tenant.
+ * This URL is unique per tenant and each tenant can access the application only through it's URL.
+ */
+router.put('/callback/v1.0/tenants/*', function(req, res) {
+    var consumerSubdomain = req.body.subscribedSubdomain;
+    var tenantAppURL = "https:\/\/" + consumerSubdomain + "-cf-multitenant-approuter-app." + "exercise.sap-samples.cn40.apps.platform.sapcloud.cn";
+    res.status(200).send(tenantAppURL);
+});
+
+/**
+ * Request Method Type - DELETE
+ * When a consumer unsubscribes this application, SaaS Provisioning invokes this API.
+ * We delete the consumer entry in the SaaS Provisioning service.
+ */
+router.delete('/callback/v1.0/tenants/*', function(req, res) {
+    console.log(req.body);
+    res.status(200).send("deleted");
+});
+//************************************************************************************************
+
 module.exports = router;

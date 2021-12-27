@@ -1,0 +1,9 @@
+{
+    "authenticationMethod": "route",
+    "routes": [{
+        "source": "/",
+        "target": "/",
+        "destination": "dest_cf_multitenant_node_app",
+        "authenticationType": "xsuaa"
+    }]
+}

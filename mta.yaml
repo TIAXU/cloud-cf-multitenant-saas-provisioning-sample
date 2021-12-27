@@ -10,10 +10,79 @@ modules:
    parameters:
       disk-quota: 256M
       memory: 256M
-      host: ${org}-cf_multitenant_node_app
-
-
-
-
-
-
+      host: ${org}-cf-multitenant-node-app
+   provides:
+     - name: dest_cf_multitenant_node_app
+       properties:
+         node_app_url: '${default-url}' 
+   requires:
+      - name: uaa_cf_multitenant
+      - name: reg_cf_multitenant
+ - name: cf_multitenant_approuter_app
+   type: nodejs
+   path: cf_multitenant_approuter_app
+   parameters:
+      disk-quota: 256M
+      memory: 256M
+      host: ${org}-cf-multitenant-approuter-app
+      keep-existing: 
+        routes: true
+   provides:
+    - name: Router_api
+      properties:
+         url: ${default-url}
+         application: ${app-name}
+   requires:
+      - name: uaa_cf_multitenant
+      - name: dest_cf_multitenant_node_app
+        group: destinations
+        properties:
+          name: dest_cf_multitenant_node_app
+          url: '~{node_app_url}'
+          forwardAuthToken: true
+   properties:
+      TENANT_HOST_PATTERN: "^(.*)-cf-multitenant-approuter-app.${default-domain}"
+resources:
+ - name: uaa_cf_multitenant
+   type: org.cloudfoundry.managed-service
+   requires:
+    - name: Router_api
+   properties:
+      XSAPPNAME: ${xsuaa-app}
+   parameters:
+      #path: ./xs-security.json
+      service-plan: application
+      service: xsuaa
+      shared: true
+      xsuaa-app: ${space}-~{Router_api/application}
+      config:
+         xsappname: ${xsuaa-app}
+         ### tenant-mode
+         tenant-mode: shared
+         description: Security profile of called application
+         scopes:
+          - name: "$XSAPPNAME.Callback"
+            description: With this scope set, the callbacks for tenant onboarding, offboarding and getDependencies can be called.
+            grant-as-authority-to-apps: 
+             - "$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
+         oauth2-configuration:
+            redirect-uris: 
+             - "http*://*.${default-domain}/**"
+ - name: reg_cf_multitenant
+   type: org.cloudfoundry.managed-service
+   requires:
+    - name: uaa_cf_multitenant
+   parameters:
+      service: saas-registry
+      service-plan: application
+      config:
+         xsappname: ~{uaa_cf_multitenant/XSAPPNAME}
+         appName: cloud-cf-multitenant-saas-provisioning-sample-hands-on
+         displayName: Multitenancy Sample in Cloud Foundry 
+         description: 'A NodeJS application to show how to use the SaaS registry to build a multi-tenant application on BTP Cloud Foundry Runtime'
+         category: 'Provider: TIA'
+         appUrls:
+            onSubscription: https://${org}-cf-multitenant-node-app.${default-domain}/callback/v1.0/tenants/{tenantId}
+            onSubscriptionAsync: false
+            onUnSubscriptionAsync: false
+            # callbackTimeoutMillis: 1200000
