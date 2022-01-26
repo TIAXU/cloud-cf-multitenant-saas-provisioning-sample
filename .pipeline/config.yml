@@ -21,12 +21,6 @@ steps:
   npmExecuteLint:
     failOnError: false    # true, if you want your pipeline to fail, if the lint check reveals any errors
 
-
-  # npmExecuteScripts: # only relevant, if you set the npmExecuteScripts parameter in the Additional Unit Tests stage to true
-  #   runScripts:
-  #     - "test:odata"
-  #     - "test:odata_negative"
-
   mtaBuild:
     buildTarget: "CF"
     extensions: "live.mtaext"  # live.mtaext for BTP Live landscape or trial.mtaext for BTP Trial Account
@@ -39,8 +33,3 @@ steps:
       org: 96938699trial # your cloud foundry org name
       space: dev # your cloud foundry space name
     mtaDeployParameters: '-f --version-rule ALL'
-    
-  # tmsUpload:            # only relevant, if you set the tmsUpload parameter in the Release stage to true
-  #   nodeName: 'QA'
-  #   credentialsId: 'tms'
-  #   customDescription: 'TMS Upload'
