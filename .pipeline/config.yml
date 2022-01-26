@@ -1,6 +1,6 @@
 # Project configuration
 general:
-  pipeline: 'cloud-cf-multitenant-saas-provisioning-sample'    # this line is mandatory
+  pipeline: 'sap-cloud-sdk'    # this line is mandatory
   buildTool: 'mta'             # or 'npm'
 
 # Stages configuration
