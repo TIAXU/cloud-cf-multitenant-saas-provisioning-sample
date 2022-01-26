@@ -3,7 +3,6 @@ _schema-version: '2.1'
 description: A NodeJS application to show how to use the SaaS registry to build a multi-tenant application on BTP Cloud Foundry Runtime.
 version: 1.0.0
 
-
 modules:
  - name: cf_multitenant_node_app
    type: nodejs
