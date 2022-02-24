@@ -1,0 +1,9 @@
+{
+    "authenticationMethod": "route",
+    "routes": [{
+        "source": "/",
+        "target": "/",
+        "destination": "dest_mt_hw_approuter_app",
+        "authenticationType": "xsuaa"
+    }]
+}
